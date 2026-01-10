@@ -1,0 +1,1 @@
+This is test file for Jenkins Pipeline. It defines a simple pipeline with stages for building, testing, and deploying an application.
