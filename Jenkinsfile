@@ -1,5 +1,5 @@
 pipeline {
-    agent [label: 'linux']
+    agent {label 'linux'}
 
     environment {
         NODE_ENV = "test"
