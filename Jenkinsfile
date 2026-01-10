@@ -6,6 +6,8 @@ pipeline {
         APP_NAME = "solar-app"
         NPM_CONFIG_AUDIT = "false"
         NPM_CONFIG_FUND = "false"
+        MONGO_URI = "mongodb+srv://cluster1.5esnosv.mongodb.net/?appName=Cluster1"
+
     }
 
     tools {
@@ -46,20 +48,12 @@ pipeline {
                     steps {
                         sh 'mkdir -p dependency-check-report'
                         
-                        dependencyCheck(
-                            odcInstallation: 'OWASP-DepCheck-12-1-5',
-                            nvdCredentialsId: 'nvd-api-key',
-                            additionalArguments: """
+                        dependencyCheck additionalArguments: '''                                
                                 --scan .
                                 --format ALL
                                 --out dependency-check-report
-                                --prettyPrint
-                            """
-                        )
-                         dependencyCheckPublisher(
-                            pattern: 'dependency-check-report/dependency-check-report.xml',
-                            failedTotalCritical: 1
-                        )
+                                --prettyPrint''', nvdCredentialsId: 'nvd-api-key', odcInstallation: 'OWASP-DepCheck-12-1-5'
+                         dependencyCheckPublisher(pattern: 'dependency-check-report/dependency-check-report.xml',failedTotalCritical: 1 )
                     }
                     post {
                         always {
@@ -99,6 +93,21 @@ pipeline {
                     reportName: 'OWASP Dependency Check Report'
                 ])
             }
+        }
+        stage('Unit testing'){ 
+            steps{
+                    withCredentials([usernamePassword(
+                    credentialsId: 'mongo-db-credentials', 
+                    passwordVariable: 'MONGO_PASSWORD', 
+                    usernameVariable: 'MONGO_USERNAME'
+                )]){    
+                    sh '''
+                        echo "Running Unit Tests..."
+                        export MONGO_USERNAME=$MONGO_USERNAME
+                        export MONGO_PASSWORD=$MONGO_PASSWORD
+                        npm test
+                    '''}
+                }
         }
     }
 
