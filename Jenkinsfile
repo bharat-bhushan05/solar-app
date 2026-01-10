@@ -18,7 +18,6 @@ pipeline {
                 sh '''
                     echo "Node Version:"
                     node -v
-
                     echo "NPM Version:"
                     npm -v
                 '''}}
@@ -45,12 +44,22 @@ pipeline {
                 /* ---------- OWASP Dependency Check ---------- */
                 stage('OWASP Dependency Check') {
                     steps {
-                        dependencyCheck additionalArguments: '''
-                            --scan .
-                            --format XML,HTML
-                            --out dependency-check-report
-                        ''',
-                        odcInstallation: 'OWASP-Dependency-Check'
+                        sh 'mkdir -p dependency-check-report'
+                        
+                        dependencyCheck(
+                            odcInstallation: 'OWASP-DepCheck-12-1-5',
+                            nvdCredentialsId: 'nvd-api-key',
+                            additionalArguments: """
+                                --scan .
+                                --format ALL
+                                --out dependency-check-report
+                                --prettyPrint
+                            """
+                        )
+                         dependencyCheckPublisher(
+                            pattern: 'dependency-check-report/dependency-check-report.xml',
+                            failedTotalCritical: 1
+                        )
                     }
                     post {
                         always {
