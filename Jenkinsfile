@@ -12,12 +12,6 @@ pipeline {
         nodejs "nodejs-22-6-0" 
     }
 
-    options {
-        timestamps()
-        ansiColor('xterm')
-        disableConcurrentBuilds()
-    }
-
     stages {
         stage('Verify Node & NPM Version') {
             steps {
