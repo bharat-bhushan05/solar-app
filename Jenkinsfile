@@ -109,6 +109,22 @@ pipeline {
                     '''}
                 }
         }
+        stage('Code coverage'){
+            steps{
+                sh '''
+                    echo "Generating Code Coverage Report..."
+                    npm run coverage
+                '''
+                publishHTML(target: [
+                    allowMissing: false,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: 'coverage/lcov-report',
+                    reportFiles: 'index.html',
+                    reportName: 'Code Coverage Report'
+                ])
+            }
+        }
     }
 
     /* ================================
