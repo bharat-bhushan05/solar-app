@@ -116,7 +116,7 @@ pipeline {
                     passwordVariable: 'MONGO_PASSWORD', 
                     usernameVariable: 'MONGO_USERNAME'
                 )]){
-                sh '''
+                sh '''      
                     echo "Generating Code Coverage Report..."
                     export MONGO_USERNAME=$MONGO_USERNAME
                     export MONGO_PASSWORD=$MONGO_PASSWORD
@@ -138,14 +138,8 @@ pipeline {
        Post Actions
     ================================= */
     post {
-        success {
-            echo "✅ Pipeline completed successfully for ${APP_NAME}"
-        }
-        failure {
-            echo "❌ Pipeline failed for ${APP_NAME}"
-        }
-        always {
-            cleanWs()
-        }
+        success {echo "✅ Pipeline completed successfully for ${APP_NAME}"}
+        failure { echo "❌ Pipeline failed for ${APP_NAME}"}
+        always {cleanWs() }
     }
 }
