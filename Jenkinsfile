@@ -111,8 +111,15 @@ pipeline {
         }
         stage('Code coverage'){
             steps{
+                    withCredentials([usernamePassword(
+                    credentialsId: 'mongo-db-credentials', 
+                    passwordVariable: 'MONGO_PASSWORD', 
+                    usernameVariable: 'MONGO_USERNAME'
+                )]){
                 sh '''
                     echo "Generating Code Coverage Report..."
+                    export MONGO_USERNAME=$MONGO_USERNAME
+                    export MONGO_PASSWORD=$MONGO_PASSWORD
                     npm run coverage
                 '''
                 publishHTML(target: [
